@@ -1,37 +1,24 @@
 package com.jd.axondemo.activity.event;
 
-import java.util.Date;
+import com.jd.axondemo.activity.dto.CreateActivityDTO;
 
 public class ActivityCreatedEvent {
 
-    private Long id;
+    private CreateActivityDTO createActivityDTO;
 
-    private String name;
-
-    private Date startTime;
-
-    private Date endTime;
-
-    public ActivityCreatedEvent(Long id, String name, Date startTime, Date endTime) {
-        this.id = id;
-        this.name = name;
-        this.startTime = startTime;
-        this.endTime = endTime;
+    public ActivityCreatedEvent(CreateActivityDTO createActivityDTO) {
+        this.createActivityDTO = createActivityDTO;
     }
 
-    public Long getId() {
-        return id;
+    public ActivityCreatedEvent() {
+
     }
 
-    public String getName() {
-        return name;
+    public CreateActivityDTO getCreateActivityDTO() {
+        return createActivityDTO;
     }
 
-    public Date getStartTime() {
-        return startTime;
-    }
-
-    public Date getEndTime() {
-        return endTime;
+    public void setCreateActivityDTO(CreateActivityDTO createActivityDTO) {
+        this.createActivityDTO = createActivityDTO;
     }
 }

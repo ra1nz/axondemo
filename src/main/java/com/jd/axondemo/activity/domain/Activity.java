@@ -2,19 +2,18 @@ package com.jd.axondemo.activity.domain;
 
 import com.jd.axondemo.activity.command.CreateActivityCommand;
 import com.jd.axondemo.activity.command.EditActivityCommand;
+import com.jd.axondemo.activity.dto.CreateActivityDTO;
 import com.jd.axondemo.activity.event.ActivityCreatedEvent;
 import com.jd.axondemo.activity.event.ActivityEditedEvent;
 import lombok.NoArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.commandhandling.model.AggregateIdentifier;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.spring.stereotype.Aggregate;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.axonframework.commandhandling.model.AggregateLifecycle.apply;
 
@@ -31,13 +30,13 @@ public class Activity {
 
     private Integer channel;
 
-    private List<Long> serviceIds;
+    private List<Integer> serviceIds = Collections.emptyList();
 
     private String description;
 
-    private Date startTime;
+    private Date activityStartTime;
 
-    private Date endTime;
+    private Date activityEndTime;
 
     private Date registerStartTime;
 
@@ -48,16 +47,24 @@ public class Activity {
     @CommandHandler
     public Activity(CreateActivityCommand command) {
         logger.info("Activity create command");
-        apply(new ActivityCreatedEvent(command.getId(), command.getName(), command.getStartTime(), command.getEndTime()));
+        apply(new ActivityCreatedEvent(command.getCreateActivityDTO()));
     }
 
     @EventSourcingHandler
     public void on(ActivityCreatedEvent event) {
         logger.info("Activity created event");
-        this.id = event.getId();
-        this.name = event.getName();
-        this.startTime = event.getStartTime();
-        this.endTime = event.getEndTime();
+        CreateActivityDTO dto = event.getCreateActivityDTO();
+        this.id = dto.getId();
+        this.name = dto.getName();
+        this.channel = dto.getChannel();
+        if (CollectionUtils.isNotEmpty(dto.getServiceIds())) {
+            this.serviceIds = new ArrayList<>(dto.getServiceIds());
+        }
+        this.description = dto.getDescription();
+        this.activityStartTime = dto.getActivityStartTime();
+        this.activityEndTime = dto.getActivityEndTime();
+        this.registerStartTime = dto.getRegisterStartTime();
+        this.registerEndTime = dto.getRegisterEndTime();
     }
 
     @CommandHandler
@@ -65,10 +72,8 @@ public class Activity {
         apply(new ActivityCreatedEvent(command.getId(), command.getName(), command.getStartTime(), command.getEndTime()));
     }
 
+    @EventSourcingHandler
     public void on(ActivityEditedEvent event) {
-        this.name = event.getName();
-        this.startTime = event.getStartTime();
-        this.endTime = event.getEndTime();
     }
 
     public Long getId() {
@@ -79,11 +84,4 @@ public class Activity {
         return name;
     }
 
-    public Date getStartTime() {
-        return startTime;
-    }
-
-    public Date getEndTime() {
-        return endTime;
-    }
 }
