@@ -2,7 +2,7 @@ package com.jd.axondemo.activity.event;
 
 import java.util.Date;
 
-public class ActivityCreatedEvent {
+public class ActivityEditedEvent {
 
     private Long id;
 
@@ -12,7 +12,7 @@ public class ActivityCreatedEvent {
 
     private Date endTime;
 
-    public ActivityCreatedEvent(Long id, String name, Date startTime, Date endTime) {
+    public ActivityEditedEvent(Long id, String name, Date startTime, Date endTime) {
         this.id = id;
         this.name = name;
         this.startTime = startTime;
