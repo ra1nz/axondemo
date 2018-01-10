@@ -1,24 +1,16 @@
 package com.jd.axondemo.activity.command;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.axonframework.commandhandling.TargetAggregateIdentifier;
 
+@AllArgsConstructor
 public class AbandonActivityApplyCommand {
 
     @TargetAggregateIdentifier
-    private final Long activityId;
+    @Getter
+    private final Long id;
 
+    @Getter
     private final Long activityApplyId;
-
-    public AbandonActivityApplyCommand(Long activityId, Long activityApplyId) {
-        this.activityId = activityId;
-        this.activityApplyId = activityApplyId;
-    }
-
-    public Long getActivityId() {
-        return activityId;
-    }
-
-    public Long getActivityApplyId() {
-        return activityApplyId;
-    }
 }

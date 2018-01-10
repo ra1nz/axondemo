@@ -1,11 +1,13 @@
 package com.jd.axondemo.activity.domain;
 
-import com.jd.axondemo.activity.command.CreateActivityCommand;
-import com.jd.axondemo.activity.command.EditActivityCommand;
+import com.jd.axondemo.activity.command.*;
+import com.jd.axondemo.activity.constants.ActivityStatus;
+import com.jd.axondemo.activity.dto.ActivityApplyDTO;
 import com.jd.axondemo.activity.dto.CreateActivityDTO;
-import com.jd.axondemo.activity.event.ActivityCreatedEvent;
-import com.jd.axondemo.activity.event.ActivityEditedEvent;
+import com.jd.axondemo.activity.event.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.log4j.Logger;
 import org.axonframework.commandhandling.CommandHandler;
@@ -24,26 +26,54 @@ public class Activity {
     private static Logger logger = Logger.getLogger(Activity.class);
 
     @AggregateIdentifier
+    @Getter
     private Long id;
 
+    @Getter
+    @Setter
     private String name;
 
+    @Getter
+    @Setter
     private Integer channel;
 
+    @Getter
+    @Setter
     private List<Integer> serviceIds = Collections.emptyList();
 
+    @Getter
+    @Setter
     private String description;
 
+    @Getter
+    @Setter
     private Date activityStartTime;
 
+    @Getter
+    @Setter
     private Date activityEndTime;
 
+    @Getter
+    @Setter
     private Date registerStartTime;
 
+    @Getter
+    @Setter
     private Date registerEndTime;
 
+    @Getter
+    @Setter
+    private Integer status;
+
+    @Getter
+    @Setter
     private Collection<ActivityApply> activityApplies = Collections.emptyList();
 
+    /**
+     * 创建活动
+     *
+     * @param command
+     */
     @CommandHandler
     public Activity(CreateActivityCommand command) {
         logger.info("Activity create command");
@@ -65,23 +95,105 @@ public class Activity {
         this.activityEndTime = dto.getActivityEndTime();
         this.registerStartTime = dto.getRegisterStartTime();
         this.registerEndTime = dto.getRegisterEndTime();
+        this.status = ActivityStatus.WAIT_FOR_REGISTER.getStatus();
     }
 
+    /**
+     * 编辑活动
+     *
+     * @param command
+     * @return
+     */
     @CommandHandler
-    public void handle(EditActivityCommand command) {
-        apply(new ActivityCreatedEvent(command.getId(), command.getName(), command.getStartTime(), command.getEndTime()));
+    public boolean handle(EditActivityCommand command) {
+        //只有活动状态为待报名时允许编辑
+        if (getStatus() != ActivityStatus.WAIT_FOR_REGISTER.getStatus()) {
+            return false;
+        }
+        apply(new ActivityEditedEvent(command.getId(), command.getName(),
+                command.getActivityStartTime(), command.getActivityEndTime(),
+                command.getRegisterStartTime(), command.getRegisterEndTime()));
+        return true;
     }
 
     @EventSourcingHandler
     public void on(ActivityEditedEvent event) {
+        this.name = event.getName();
+        this.activityStartTime = event.getActivityStartTime();
+        this.activityEndTime = event.getActivityEndTime();
+        this.registerStartTime = event.getRegisterStartTime();
+        this.registerEndTime = event.getRegisterEndTime();
     }
 
-    public Long getId() {
-        return id;
+    /**
+     * 添加ActivityApply
+     *
+     * @param command
+     * @return
+     */
+    @CommandHandler
+    public boolean handle(AddActivityApplyCommand command) {
+        if (CollectionUtils.isEmpty(command.getActivityApplyDTOS())) {
+            return false;
+        }
+        apply(new ActivityApplyAddedEvent(command.getActivityApplyDTOS()));
+        return true;
     }
 
-    public String getName() {
-        return name;
+    @EventSourcingHandler
+    public void on(ActivityApplyAddedEvent event) {
+        List<ActivityApply> activityApplies = new ArrayList<>(getActivityApplies().size() + event.getActivityApplies().size());
+        activityApplies.addAll(getActivityApplies());
+        for (ActivityApplyDTO dto : event.getActivityApplies()) {
+            activityApplies.add(new ActivityApply(dto.getId(), getId(), dto.getTaskName(),
+                    dto.getBrandServiceId(), dto.getPushDataType(), dto.getStartTime(), dto.getEndTime(), dto.getStatus()));
+        }
+        setActivityApplies(activityApplies);
     }
 
+    /**
+     * 移除ActivityApply
+     *
+     * @param command
+     * @return
+     */
+    @CommandHandler
+    public boolean handle(AbandonActivityApplyCommand command) {
+        if (CollectionUtils.isEmpty(getActivityApplies())) {
+            return false;
+        }
+        apply(new ActivityApplyAbandonedEvent(getId(), command.getActivityApplyId()));
+        return true;
+    }
+
+    @EventSourcingHandler
+    public void on(ActivityApplyAbandonedEvent event) {
+        for (Iterator<ActivityApply> it = getActivityApplies().iterator(); it.hasNext(); ) {
+            if (it.next().getId() == event.getActivityApplyId()) {
+                it.remove();
+                break;
+            }
+        }
+    }
+
+    /**
+     * 开始活动报名
+     *
+     * @param command
+     * @return
+     */
+    @CommandHandler
+    public boolean handle(StartRegisterCommand command) {
+        if (getStatus() != ActivityStatus.WAIT_FOR_REGISTER.getStatus()) {
+            return false;
+        }
+        apply(new RegisterStartedEvent());
+        return true;
+    }
+
+    @EventSourcingHandler
+    public void on(RegisterStartedEvent event) {
+        //设置状态为报名中
+        setStatus(ActivityStatus.REGISTER_IN_PROGRESS.getStatus());
+    }
 }

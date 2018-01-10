@@ -1,24 +1,17 @@
 package com.jd.axondemo.activity.event;
 
 import com.jd.axondemo.activity.dto.CreateActivityDTO;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@NoArgsConstructor
+@AllArgsConstructor
 public class ActivityCreatedEvent {
 
+    @Getter
+    @Setter
     private CreateActivityDTO createActivityDTO;
 
-    public ActivityCreatedEvent(CreateActivityDTO createActivityDTO) {
-        this.createActivityDTO = createActivityDTO;
-    }
-
-    public ActivityCreatedEvent() {
-
-    }
-
-    public CreateActivityDTO getCreateActivityDTO() {
-        return createActivityDTO;
-    }
-
-    public void setCreateActivityDTO(CreateActivityDTO createActivityDTO) {
-        this.createActivityDTO = createActivityDTO;
-    }
 }

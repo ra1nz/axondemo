@@ -1,37 +1,38 @@
 package com.jd.axondemo.activity.event;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.util.Date;
 
+@NoArgsConstructor
+@AllArgsConstructor
 public class ActivityEditedEvent {
 
+    @Getter
+    @Setter
     private Long id;
 
+    @Getter
+    @Setter
     private String name;
 
-    private Date startTime;
+    @Getter
+    @Setter
+    private Date activityStartTime;
 
-    private Date endTime;
+    @Getter
+    @Setter
+    private Date activityEndTime;
 
-    public ActivityEditedEvent(Long id, String name, Date startTime, Date endTime) {
-        this.id = id;
-        this.name = name;
-        this.startTime = startTime;
-        this.endTime = endTime;
-    }
+    @Getter
+    @Setter
+    private Date registerStartTime;
 
-    public Long getId() {
-        return id;
-    }
+    @Getter
+    @Setter
+    private Date registerEndTime;
 
-    public String getName() {
-        return name;
-    }
-
-    public Date getStartTime() {
-        return startTime;
-    }
-
-    public Date getEndTime() {
-        return endTime;
-    }
 }

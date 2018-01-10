@@ -1,65 +1,57 @@
 package com.jd.axondemo.activity.domain;
 
-import java.util.Date;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+import java.util.Date;
+import java.util.Objects;
+
+@NoArgsConstructor
+@AllArgsConstructor
 public class ActivityApply {
 
+    @Getter
     private Long id;
 
+    @Getter
     private Long activityId;
 
+    @Getter
     private String taskName;
 
+    @Getter
     private Long serviceId;
 
+    @Getter
     private Integer pushDataType;
 
+    @Getter
     private Date startTime;
 
+    @Getter
     private Date endTime;
 
+    @Getter
     private Integer status;
 
-    public ActivityApply(Long id, Long activityId, String taskName, Long serviceId, Integer pushDataType, Date startTime, Date endTime, Integer status) {
-        this.id = id;
-        this.activityId = activityId;
-        this.taskName = taskName;
-        this.serviceId = serviceId;
-        this.pushDataType = pushDataType;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.status = status;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ActivityApply that = (ActivityApply) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(activityId, that.activityId) &&
+                Objects.equals(taskName, that.taskName) &&
+                Objects.equals(serviceId, that.serviceId) &&
+                Objects.equals(pushDataType, that.pushDataType) &&
+                Objects.equals(startTime, that.startTime) &&
+                Objects.equals(endTime, that.endTime) &&
+                Objects.equals(status, that.status);
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public Long getActivityId() {
-        return activityId;
-    }
-
-    public String getTaskName() {
-        return taskName;
-    }
-
-    public Long getServiceId() {
-        return serviceId;
-    }
-
-    public Integer getPushDataType() {
-        return pushDataType;
-    }
-
-    public Date getStartTime() {
-        return startTime;
-    }
-
-    public Date getEndTime() {
-        return endTime;
-    }
-
-    public Integer getStatus() {
-        return status;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, activityId, taskName, serviceId, pushDataType, startTime, endTime, status);
     }
 }
