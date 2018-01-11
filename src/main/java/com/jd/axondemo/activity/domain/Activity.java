@@ -9,7 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.log4j.Logger;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.commandhandling.model.AggregateIdentifier;
 import org.axonframework.eventsourcing.EventSourcingHandler;
@@ -22,8 +21,6 @@ import static org.axonframework.commandhandling.model.AggregateLifecycle.apply;
 @NoArgsConstructor
 @Aggregate
 public class Activity {
-
-    private static Logger logger = Logger.getLogger(Activity.class);
 
     @AggregateIdentifier
     @Getter
@@ -76,13 +73,11 @@ public class Activity {
      */
     @CommandHandler
     public Activity(CreateActivityCommand command) {
-        logger.info("Activity create command");
         apply(new ActivityCreatedEvent(command.getCreateActivityDTO()));
     }
 
     @EventSourcingHandler
     public void on(ActivityCreatedEvent event) {
-        logger.info("Activity created event");
         CreateActivityDTO dto = event.getCreateActivityDTO();
         this.id = dto.getId();
         this.name = dto.getName();

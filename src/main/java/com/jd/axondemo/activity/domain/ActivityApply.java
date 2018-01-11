@@ -21,7 +21,7 @@ public class ActivityApply {
     private String taskName;
 
     @Getter
-    private Long serviceId;
+    private Long brandServiceId;
 
     @Getter
     private Integer pushDataType;
@@ -43,7 +43,7 @@ public class ActivityApply {
         return Objects.equals(id, that.id) &&
                 Objects.equals(activityId, that.activityId) &&
                 Objects.equals(taskName, that.taskName) &&
-                Objects.equals(serviceId, that.serviceId) &&
+                Objects.equals(brandServiceId, that.brandServiceId) &&
                 Objects.equals(pushDataType, that.pushDataType) &&
                 Objects.equals(startTime, that.startTime) &&
                 Objects.equals(endTime, that.endTime) &&
@@ -52,6 +52,6 @@ public class ActivityApply {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, activityId, taskName, serviceId, pushDataType, startTime, endTime, status);
+        return Objects.hash(id, activityId, taskName, brandServiceId, pushDataType, startTime, endTime, status);
     }
 }
