@@ -70,5 +70,17 @@ public class ActivityTests {
                 .expectEvents(new ActivityApplyAbandonedEvent(dto.getId(), applyId));
     }
 
+    @Test
+    public void testMock() {
+        CreateActivityDTO dto = buildCreateActivityDTO();
+        Collection<ActivityApplyDTO> activityApplies = new ArrayList<>();
+        for (int i = 0; i < 5; ++i) {
+            activityApplies.add(buidActivityApplyDTO(dto.getId(), Long.valueOf(i)));
+        }
+        fixture.givenCommands(new CreateActivityCommand(dto),
+                new StartRegisterCommand(dto.getId()), new AddActivityApplyCommand(dto.getId(), activityApplies))
+                .when(new AbandonActivityApplyCommand(dto.getId(), 1L))
+                .expectEvents(new ActivityApplyAbandonedEvent(dto.getId(), 1L));
+    }
 
 }

@@ -11,6 +11,7 @@ import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.commandhandling.model.AggregateIdentifier;
+import org.axonframework.commandhandling.model.AggregateRoot;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.spring.stereotype.Aggregate;
 
@@ -19,7 +20,7 @@ import java.util.*;
 import static org.axonframework.commandhandling.model.AggregateLifecycle.apply;
 
 @NoArgsConstructor
-@Aggregate
+@AggregateRoot
 public class Activity {
 
     @AggregateIdentifier
